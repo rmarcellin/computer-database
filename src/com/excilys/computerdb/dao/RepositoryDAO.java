@@ -75,5 +75,14 @@ public class RepositoryDAO {
     Connection getConnection () throws SQLException {
     	return DriverManager.getConnection(url, login, passwd);
     }
+    
+    // TODO Construct getters for my DAOs
+    public ComputerDAO getComputerDAO() {
+    	return new ComputerDAO(this);
+    }
+    
+    public CompanyDAO getCompanyDAO() {
+    	return new CompanyDAO(this);
+    }
 
 }
