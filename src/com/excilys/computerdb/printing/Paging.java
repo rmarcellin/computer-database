@@ -3,6 +3,7 @@ package com.excilys.computerdb.printing;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.List;
+import java.util.Scanner;
 
 import com.excilys.computerdb.beans.Computer;
 
@@ -10,7 +11,7 @@ import com.excilys.computerdb.beans.Computer;
 /**
  * The Class Paging.
  */
-public class Paging implements KeyListener {
+public class Paging {
 	
 	/** The list computer. */
 	private List<Computer> listComputer;
@@ -22,10 +23,10 @@ public class Paging implements KeyListener {
 	private boolean finished;
 	
 	/** The page seize. */
-	private static int PAGE_SEIZE = 5;
+	private static final int PAGE_SIZE = 5;
+	private int pageNbrs;
+	private volatile int crrPage;
 	
-	/** The cptr. */
-	private int cptr;
 	
 	/**
 	 * Instantiates a new paging.
@@ -33,49 +34,20 @@ public class Paging implements KeyListener {
 	 * @param listComputer the list computer
 	 */
 	public Paging(List<Computer> listComputer) {
-		this.cptr = 0;
+		this.crrPage = 0;
 		this.listComputer = listComputer;
 		this.size = listComputer.size();
-		this.finished = false;
-		if (this.size > PAGE_SEIZE) {
-			for (cptr = 0; cptr < PAGE_SEIZE; cptr++) {
-				System.out.println(listComputer.get(cptr));
-			}
+		if ((this.size % PAGE_SIZE) == 0) {
+			this.pageNbrs = this.size / PAGE_SIZE;
 		} else {
-			System.out.println(this.listComputer);
-			this.finished = true;
-		}
+			this.pageNbrs = (this.size / PAGE_SIZE) + 1;
+		}		
 	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.KeyListener#keyPressed(java.awt.event.KeyEvent)
-	 */
-	@Override
-	public void keyPressed(KeyEvent e) {
-		System.out.println(e.getKeyCode());
-		/*if (e.)
-		while (finished) {
-			
-		}*/
-		
+	
+	public List<Computer> getNextPage() {
+		List<Computer> tmp = listComputer.subList(crrPage, (crrPage * PAGE_SIZE));
+		crrPage++;
+		return tmp;
 	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.KeyListener#keyReleased(java.awt.event.KeyEvent)
-	 */
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.KeyListener#keyTyped(java.awt.event.KeyEvent)
-	 */
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	
 }
