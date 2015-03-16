@@ -10,14 +10,33 @@ import java.util.List;
 import com.excilys.computerdb.beans.Company;
 import com.excilys.computerdb.exception.DAOException;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class CompanyDAO.
+ */
 public class CompanyDAO {
+	
+	/** The repository. */
 	private RepositoryDAO repository;
+	
+	/** The Constant SQL_SELECT_ALL_COMPANIES. */
 	private static final String SQL_SELECT_ALL_COMPANIES = "SELECT * FROM company";
 
+	/**
+	 * Instantiates a new company dao.
+	 *
+	 * @param repositoryDAO the repository dao
+	 */
 	public CompanyDAO(RepositoryDAO repositoryDAO) {
 		this.repository = repositoryDAO;
 	}
 	
+	/**
+	 * Gets the companies.
+	 *
+	 * @return the companies
+	 * @throws SQLException the SQL exception
+	 */
 	public List<Company> getCompanies() throws SQLException {
 		List<Company> companies = new ArrayList<>();
 		Company company = null;

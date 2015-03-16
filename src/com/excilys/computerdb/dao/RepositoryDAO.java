@@ -12,23 +12,42 @@ import java.util.Properties;
 
 import com.excilys.computerdb.exception.DAOConfException;
 
+// TODO: Auto-generated Javadoc
 /**
+ * The Class RepositoryDAO.
+ *
  * @author excilys This class instanciate our various DAO
  */
 public class RepositoryDAO {
 
+	/** The Constant PROPERTIES_FILE. */
 	private static final String PROPERTIES_FILE = 
 				"com/excilys/computerdb/dao/conf/dao.properties";
+	
+	/** The Constant PROPERTY_URL. */
 	private static final String PROPERTY_URL = "url";
+	
+	/** The Constant PROPERTY_DRIVER. */
 	private static final String PROPERTY_DRIVER = "driver";
+	
+	/** The Constant PROPERTY_LOGIN. */
 	private static final String PROPERTY_LOGIN = "login";
+	
+	/** The Constant PROPERTY_PASSWD. */
 	private static final String PROPERTY_PASSWD = "passwd";
 	
+	/** The url. */
 	private String url;
+    
+    /** The login. */
     private String login;
+    
+    /** The passwd. */
     private String passwd;
     
 	/**
+	 * Instantiates a new repository dao.
+	 *
 	 * @param url : mysql db url
 	 * @param login : login to access the db
 	 * @param passwd : password to access the db
@@ -39,6 +58,12 @@ public class RepositoryDAO {
 		this.passwd = passwd;
 	}
     
+    /**
+     * Gets the single instance of RepositoryDAO.
+     *
+     * @return single instance of RepositoryDAO
+     * @throws DAOConfException the DAO conf exception
+     */
     public static RepositoryDAO getInstance() throws DAOConfException {
     	String url, login, passwd, driver;
     	Properties properties = new Properties();
@@ -72,15 +97,31 @@ public class RepositoryDAO {
     	return repository;
     }
     
+    /**
+     * Gets the connection.
+     *
+     * @return the connection
+     * @throws SQLException the SQL exception
+     */
     Connection getConnection () throws SQLException {
     	return DriverManager.getConnection(url, login, passwd);
     }
     
     // TODO Construct getters for my DAOs
+    /**
+     * Gets the computer dao.
+     *
+     * @return the computer dao
+     */
     public ComputerDAO getComputerDAO() {
     	return new ComputerDAO(this);
     }
     
+    /**
+     * Gets the company dao.
+     *
+     * @return the company dao
+     */
     public CompanyDAO getCompanyDAO() {
     	return new CompanyDAO(this);
     }
