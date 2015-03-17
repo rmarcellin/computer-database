@@ -90,6 +90,9 @@ public class Util {
 		if (listSize <= pageSize) {
 			System.out.println(list);
 		} else {
+			int[] blockList;
+			int pageNbr = listSize / pageSize;
+		
 			System.out.println(
 					"Tapez \"n\" pour suivant et \"p\" pour précédent");
 			restart:
