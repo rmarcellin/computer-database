@@ -1,4 +1,4 @@
-package com.excilys.computerdb.printing;
+package com.excilys.computerdb.ui;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

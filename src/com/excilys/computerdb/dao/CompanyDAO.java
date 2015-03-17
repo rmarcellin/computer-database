@@ -17,7 +17,7 @@ import com.excilys.computerdb.exception.DAOException;
 public class CompanyDAO {
 	
 	/** The repository. */
-	private RepositoryDAO repository;
+	private DAOFactory repository;
 	
 	/** The Constant SQL_SELECT_ALL_COMPANIES. */
 	private static final String SQL_SELECT_ALL_COMPANIES = "SELECT * FROM company";
@@ -25,10 +25,10 @@ public class CompanyDAO {
 	/**
 	 * Instantiates a new company dao.
 	 *
-	 * @param repositoryDAO the repository dao
+	 * @param daoFactory the repository dao
 	 */
-	public CompanyDAO(RepositoryDAO repositoryDAO) {
-		this.repository = repositoryDAO;
+	public CompanyDAO(DAOFactory daoFactory) {
+		this.repository = daoFactory;
 	}
 	
 	/**

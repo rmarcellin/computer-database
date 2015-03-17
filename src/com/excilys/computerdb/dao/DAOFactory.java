@@ -18,7 +18,7 @@ import com.excilys.computerdb.exception.DAOConfException;
  *
  * @author excilys This class instanciate our various DAO
  */
-public class RepositoryDAO {
+public class DAOFactory {
 
 	/** The Constant PROPERTIES_FILE. */
 	private static final String PROPERTIES_FILE = 
@@ -52,7 +52,7 @@ public class RepositoryDAO {
 	 * @param login : login to access the db
 	 * @param passwd : password to access the db
 	 */
-	private RepositoryDAO(String url, String login, String passwd) {
+	private DAOFactory(String url, String login, String passwd) {
 		this.url = url;
 		this.login = login;
 		this.passwd = passwd;
@@ -64,7 +64,7 @@ public class RepositoryDAO {
      * @return single instance of RepositoryDAO
      * @throws DAOConfException the DAO conf exception
      */
-    public static RepositoryDAO getInstance() throws DAOConfException {
+    public static DAOFactory getInstance() throws DAOConfException {
     	String url, login, passwd, driver;
     	Properties properties = new Properties();
     	
@@ -93,7 +93,7 @@ public class RepositoryDAO {
     				("Can't load file properties " + PROPERTIES_FILE, e);
     	}
     	
-    	RepositoryDAO repository = new RepositoryDAO(url, login, passwd);
+    	DAOFactory repository = new DAOFactory(url, login, passwd);
     	return repository;
     }
     

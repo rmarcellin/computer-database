@@ -13,6 +13,8 @@ import org.joda.time.LocalDate;
 
 import com.excilys.computerdb.beans.Computer;
 import com.excilys.computerdb.exception.DAOException;
+import com.excilys.computerdb.mapper.ComputerMapper;
+import com.excilys.computerdb.utils.Util;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -21,7 +23,7 @@ import com.excilys.computerdb.exception.DAOException;
 public class ComputerDAO {
 	
 	/** The repository. */
-	private RepositoryDAO repository;
+	private DAOFactory repository;
 	
 	/** The Constant SQL_SELECT_ALL_COMPUTERS. */
 	private static final String SQL_SELECT_ALL_COMPUTERS = 
@@ -53,11 +55,11 @@ public class ComputerDAO {
 	/**
 	 * Instantiates a new computer dao.
 	 *
-	 * @param repositoryDAO the repository dao
+	 * @param daoFactory the repository dao
 	 */
-	public ComputerDAO(RepositoryDAO repositoryDAO) {
+	public ComputerDAO(DAOFactory daoFactory) {
 		// TODO Auto-generated constructor stub
-		this.repository = repositoryDAO;
+		this.repository = daoFactory;
 	}
 	
 	/**
@@ -86,7 +88,7 @@ public class ComputerDAO {
 		} catch (SQLException e) {
 			throw new DAOException(e);
 		} finally {
-			closeRessources(connection, preparedStatement);
+			Util.closeRessources(connection, preparedStatement);
 		}
 		
 		return deletedComp;
@@ -117,25 +119,19 @@ public class ComputerDAO {
 			updatedComp.setName(values.get("name"));
 			preparedStatement.setString(1, updatedComp.getName());
 			
-			// instroduction year
-			String[] introStr = values.get("introduced").split("-");
-			LocalDate introduced = new LocalDate();
-			introduced.withYear(Integer.parseInt(introStr[0]));
-			introduced.withMonthOfYear(Integer.parseInt(introStr[1]));
-			introduced.withDayOfMonth(Integer.parseInt(introStr[2]));		
+			// instroduction date
+			String introStr = values.get("introduced");
+			LocalDate introduced = Util.poduceLocalDateFromString(introStr);		
 			updatedComp.setIntroduced(introduced);
 			preparedStatement.setTimestamp(2, 
-					getTimeStampFromLocalDate(updatedComp.getIntroduced()));
+					Util.getTimeStampFromLocalDate(updatedComp.getIntroduced()));
 			
-			// discontinued year
-			String[] discoStr = values.get("discontinued").split("-");
-			LocalDate discontinued = new LocalDate();
-			discontinued.withYear(Integer.parseInt(discoStr[0]));
-			discontinued.withMonthOfYear(Integer.parseInt(discoStr[1]));
-			discontinued.withDayOfMonth(Integer.parseInt(discoStr[2]));
+			// discontinued date
+			String discoStr = values.get("discontinued");
+			LocalDate discontinued = Util.poduceLocalDateFromString(discoStr);
 			updatedComp.setDiscontinued(discontinued);
 			preparedStatement.setTimestamp(3, 
-					getTimeStampFromLocalDate(updatedComp.getDiscontinued()));
+					Util.getTimeStampFromLocalDate(updatedComp.getDiscontinued()));
 			
 			// companyId
 			updatedComp.setCompanyId(Long.parseLong(values.get("companyId")));
@@ -153,7 +149,7 @@ public class ComputerDAO {
 		} catch (SQLException e) {
 			throw new DAOException(e);
 		} finally {
-			closeRessources(connection, preparedStatement);
+			Util.closeRessources(connection, preparedStatement);
 		}
 		
 		return updatedComp;
@@ -174,10 +170,10 @@ public class ComputerDAO {
 			preparedStatement = connection.prepareStatement(SQL_CREATE_COMPUTER);
 			preparedStatement.setString(1, comp.getName());
 			
-			Timestamp introduced = getTimeStampFromLocalDate(comp.getIntroduced());
+			Timestamp introduced = Util.getTimeStampFromLocalDate(comp.getIntroduced());
 			preparedStatement.setTimestamp(2, introduced);			
 			
-			Timestamp discontinued = getTimeStampFromLocalDate(comp.getDiscontinued());		
+			Timestamp discontinued = Util.getTimeStampFromLocalDate(comp.getDiscontinued());		
 			preparedStatement.setTimestamp(3, discontinued);
 			
 			preparedStatement.setLong(4, comp.getCompanyId());
@@ -190,7 +186,7 @@ public class ComputerDAO {
 		} catch (SQLException e) {
 			throw new DAOException(e);
 		} finally {
-			closeRessources(connection, preparedStatement);
+			Util.closeRessources(connection, preparedStatement);
 		}
 
 	}
@@ -214,11 +210,11 @@ public class ComputerDAO {
 			preparedStatement.setLong(1, new Long(criteria));
 			resultSet = preparedStatement.executeQuery();
 			resultSet.next();
-			comp = computerMap (resultSet);
+			comp = new ComputerMapper().map(resultSet);
 		} catch (SQLException e) {
 			throw new DAOException(e);
 		} finally {
-			closeRessources(connection, preparedStatement);
+			Util.closeRessources(connection, preparedStatement);
 		}
 				
 		return comp;
@@ -243,11 +239,11 @@ public class ComputerDAO {
 			preparedStatement.setString(1, criteria);
 			resultSet = preparedStatement.executeQuery();
 			resultSet.next();
-			comp = computerMap (resultSet);
+			comp = new ComputerMapper().map(resultSet);
 		} catch (SQLException e) {
 			throw new DAOException(e);
 		} finally {
-			closeRessources(connection, preparedStatement);
+			Util.closeRessources(connection, preparedStatement);
 		}
 				
 		return comp;
@@ -272,75 +268,16 @@ public class ComputerDAO {
 			resultSet = preparedStatement.executeQuery();
 			
 			while (resultSet.next()) {
-				computer = computerMap (resultSet);
+				computer = new ComputerMapper().map(resultSet);
 				listComp.add(computer);
 			}
 		} catch (SQLException e) {
 			throw new DAOException(e);
 		} finally {
-			closeRessources(connection, preparedStatement);
+			Util.closeRessources(connection, preparedStatement);
 		}
 		
 		return listComp;
-	}
-	
-	
-	//////////////////////// UTILS ////////////////////////
-	/**
-	 * Computer map.
-	 *
-	 * @param resultSet the result set
-	 * @return the computer
-	 * @throws SQLException the SQL exception
-	 */
-	private static Computer computerMap (ResultSet resultSet) throws SQLException {
-		Computer computer = new Computer();
-		computer = new Computer();
-		computer.setId(resultSet.getLong("id"));
-		computer.setName(resultSet.getString("name"));				
-		
-		Timestamp tmp1 = resultSet.getTimestamp("introduced");
-		if (tmp1 != null) {
-			long tstampInt = tmp1.getTime();				
-			LocalDate ldInt = new LocalDate(tstampInt);
-			computer.setIntroduced(ldInt);
-		}
-		
-		Timestamp tmp2 = resultSet.getTimestamp("discontinued");
-		if (tmp2 != null) {
-			long tstampDis = tmp2.getTime();
-			LocalDate ldDis = new LocalDate(tstampDis);
-			computer.setDiscontinued(ldDis);
-		}				
-		
-		computer.setCompanyId(resultSet.getLong("company_id"));
-		return computer;
-	}
-	
-	/**
-	 * Gets the time stamp from local date.
-	 *
-	 * @param ld the ld
-	 * @return the time stamp from local date
-	 */
-	private static Timestamp getTimeStampFromLocalDate(LocalDate ld) {
-		return Timestamp.valueOf(
-				ld.getYear() + "-" + 
-				ld.getMonthOfYear() + "-" + 
-				ld.getDayOfMonth() + 
-				" 00:00:00.0");
-	}
-	
-	/**
-	 * Close ressources.
-	 *
-	 * @param conn the conn
-	 * @param p the p
-	 * @throws SQLException the SQL exception
-	 */
-	private static void closeRessources(Connection conn, PreparedStatement p) throws SQLException {
-		conn.close();
-		p.close();
 	}
 
 }

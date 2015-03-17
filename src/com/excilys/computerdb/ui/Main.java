@@ -1,4 +1,4 @@
-package com.excilys.computerdb.printing;
+package com.excilys.computerdb.ui;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -7,7 +7,7 @@ import java.util.Scanner;
 import com.excilys.computerdb.beans.Computer;
 import com.excilys.computerdb.dao.CompanyDAO;
 import com.excilys.computerdb.dao.ComputerDAO;
-import com.excilys.computerdb.dao.RepositoryDAO;
+import com.excilys.computerdb.dao.DAOFactory;
 
 public class Main {
 	private static final String COMP_NAME = "name";
@@ -18,7 +18,7 @@ public class Main {
 	private enum Choice {ALL_COMPUTERS, ALL_COMPANIES, ONE_COMPUTER, }
 
 	public static void main(String[] args) throws SQLException {
-		RepositoryDAO rep = RepositoryDAO.getInstance();
+		DAOFactory rep = DAOFactory.getInstance();
 		//CompanyDAO companyDAO = rep.getCompanyDAO();
 		ComputerDAO computerDAO = rep.getComputerDAO();
 		List<Computer> listComputer = computerDAO.getComputers();
